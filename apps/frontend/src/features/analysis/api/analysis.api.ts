@@ -1,4 +1,8 @@
-import type { AnalysisResult, WorkflowStatusResponse } from "../types/workflow";
+import {
+  parseWorkflowStatus,
+  type AnalysisResult,
+  type WorkflowStatusResponse,
+} from "../types/workflow";
 
 const API_BASE_URL = "http://localhost:4000";
 
@@ -26,7 +30,19 @@ export async function fetchWorkflowStatus(workflowId: string): Promise<WorkflowS
     const body = await response.json().catch(() => null);
     throw new Error(body?.error ?? "Failed to fetch workflow status.");
   }
-  return (await response.json()) as WorkflowStatusResponse;
+  const body = (await response.json()) as {
+    workflowId: string;
+    status: string;
+    startTime?: string;
+    closeTime?: string;
+  };
+
+  return {
+    workflowId: body.workflowId,
+    status: parseWorkflowStatus(body.status),
+    startTime: body.startTime,
+    closeTime: body.closeTime,
+  };
 }
 
 export async function fetchWorkflowResult(workflowId: string): Promise<AnalysisResult> {
