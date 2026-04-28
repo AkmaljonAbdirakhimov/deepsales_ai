@@ -1,9 +1,27 @@
+import "dotenv/config";
 import path from "node:path";
 import { NativeConnection, Worker } from "@temporalio/worker";
 import { env } from "./config/env";
 import { activities } from "./activities";
 
+function validateStartupEnv(): void {
+  const missing: string[] = [];
+
+  if (!env.geminiApiKey.trim()) {
+    missing.push("GEMINI_API_KEY");
+  }
+
+  if (missing.length > 0) {
+    throw new Error(
+      `Missing required environment variable(s): ${missing.join(", ")}. ` +
+        "Set them in apps/temporal/.env before starting the worker.",
+    );
+  }
+}
+
 async function run(): Promise<void> {
+  validateStartupEnv();
+
   const connection = await NativeConnection.connect({
     address: env.temporalAddress,
   });

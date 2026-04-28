@@ -11,7 +11,20 @@ const { validateAudio, transcribeAudio, analyzeConversation } = proxyActivities<
 });
 
 export async function analyzeAudioWorkflow(input: AnalyzeAudioInput): Promise<AnalysisResult> {
-  await validateAudio(input);
-  const transcript = await transcribeAudio(input);
-  return analyzeConversation(transcript);
+  const { cleanupAudioFile } = proxyActivities<AnalysisActivities>({
+    startToCloseTimeout: "1 minute",
+    retry: {
+      initialInterval: "1 second",
+      backoffCoefficient: 2,
+      maximumAttempts: 3,
+    },
+  });
+
+  try {
+    await validateAudio(input);
+    const transcript = await transcribeAudio(input);
+    return analyzeConversation(transcript);
+  } finally {
+    await cleanupAudioFile(input);
+  }
 }

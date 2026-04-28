@@ -11,16 +11,16 @@ export function AnalysisResultCard({ result }: AnalysisResultCardProps) {
     <Card>
       <CardHeader>
         <CardTitle>Analysis Result</CardTitle>
-        <CardDescription>Mock response from current Temporal activities.</CardDescription>
+        <CardDescription>Real Gemini output (missing fields show as "No data").</CardDescription>
       </CardHeader>
       <CardContent className="grid gap-4 md:grid-cols-2">
         <Metric label="Category" value={result.category} />
-        <Metric label="Script Adherence" value={String(result.metrics.scriptAdherenceScore)} />
-        <Metric label="Talk Ratio" value={String(result.metrics.talkRatio)} />
-        <Metric label="Objection Handling" value={String(result.metrics.objectionHandlingScore)} />
-        <Metric label="Mistakes Count" value={String(result.metrics.mistakesCount)} />
-        <Metric label="Sentiment Score" value={String(result.metrics.sentimentScore)} />
-        <Metric label="Lead Quality Score" value={String(result.metrics.leadQualityScore)} />
+        <Metric label="Script Adherence" value={result.metrics.scriptAdherenceScore} />
+        <Metric label="Talk Ratio" value={result.metrics.talkRatio} />
+        <Metric label="Objection Handling" value={result.metrics.objectionHandlingScore} />
+        <Metric label="Mistakes Count" value={result.metrics.mistakesCount} />
+        <Metric label="Sentiment Score" value={result.metrics.sentimentScore} />
+        <Metric label="Lead Quality Score" value={result.metrics.leadQualityScore} />
         <Metric label="Summary" value={result.summary} className="md:col-span-2" />
         <Metric label="Transcript" value={result.transcript} className="md:col-span-2" />
       </CardContent>

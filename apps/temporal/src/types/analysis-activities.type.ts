@@ -5,4 +5,5 @@ export interface AnalysisActivities {
   validateAudio(input: AnalyzeAudioInput): Promise<void>;
   transcribeAudio(input: AnalyzeAudioInput): Promise<string>;
   analyzeConversation(transcript: string): Promise<AnalysisResult>;
+  cleanupAudioFile(input: AnalyzeAudioInput): Promise<void>;
 }

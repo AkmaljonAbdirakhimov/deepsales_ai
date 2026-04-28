@@ -4,7 +4,7 @@ import {
   fetchWorkflowStatus,
   startAudioAnalysis,
 } from "../api/analysis.api";
-import { WorkflowStatus, type AnalysisResult } from "../types/workflow";
+import { WORKFLOW_STATUS, type AnalysisResult, type WorkflowStatus } from "../types/workflow";
 
 const POLL_INTERVAL_MS = 2500;
 
@@ -18,13 +18,13 @@ export function useAudioAnalysis() {
 
   const statusVariant = useMemo(() => {
     switch (status) {
-      case WorkflowStatus.COMPLETED:
+      case WORKFLOW_STATUS.COMPLETED:
         return "success";
-      case WorkflowStatus.FAILED:
-      case WorkflowStatus.TERMINATED:
-      case WorkflowStatus.TIMED_OUT:
+      case WORKFLOW_STATUS.FAILED:
+      case WORKFLOW_STATUS.TERMINATED:
+      case WORKFLOW_STATUS.TIMED_OUT:
         return "danger";
-      case WorkflowStatus.RUNNING:
+      case WORKFLOW_STATUS.RUNNING:
         return "warning";
       default:
         return "secondary";
@@ -46,7 +46,7 @@ export function useAudioAnalysis() {
     try {
       const newWorkflowId = await startAudioAnalysis(audioFile);
       setWorkflowId(newWorkflowId);
-      setStatus(WorkflowStatus.RUNNING);
+      setStatus(WORKFLOW_STATUS.RUNNING);
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "Unexpected upload error.");
     } finally {
@@ -69,7 +69,7 @@ export function useAudioAnalysis() {
 
         setStatus(workflowStatus.status);
 
-        if (workflowStatus.status === WorkflowStatus.COMPLETED) {
+        if (workflowStatus.status === WORKFLOW_STATUS.COMPLETED) {
           clearInterval(interval);
           const workflowResult = await fetchWorkflowResult(workflowId);
           if (!isCancelled) {
@@ -78,10 +78,10 @@ export function useAudioAnalysis() {
         }
 
         if (
-          workflowStatus.status === WorkflowStatus.FAILED ||
-          workflowStatus.status === WorkflowStatus.CANCELED ||
-          workflowStatus.status === WorkflowStatus.TERMINATED ||
-          workflowStatus.status === WorkflowStatus.TIMED_OUT
+          workflowStatus.status === WORKFLOW_STATUS.FAILED ||
+          workflowStatus.status === WORKFLOW_STATUS.CANCELED ||
+          workflowStatus.status === WORKFLOW_STATUS.TERMINATED ||
+          workflowStatus.status === WORKFLOW_STATUS.TIMED_OUT
         ) {
           clearInterval(interval);
         }

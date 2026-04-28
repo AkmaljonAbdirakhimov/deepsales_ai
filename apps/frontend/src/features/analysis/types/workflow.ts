@@ -1,47 +1,49 @@
-export enum WorkflowStatus {
-  UNSPECIFIED = "UNSPECIFIED",
-  RUNNING = "RUNNING",
-  COMPLETED = "COMPLETED",
-  FAILED = "FAILED",
-  CANCELED = "CANCELED",
-  TERMINATED = "TERMINATED",
-  CONTINUED_AS_NEW = "CONTINUED_AS_NEW",
-  TIMED_OUT = "TIMED_OUT",
-}
+export const WORKFLOW_STATUS = {
+  UNSPECIFIED: "UNSPECIFIED",
+  RUNNING: "RUNNING",
+  COMPLETED: "COMPLETED",
+  FAILED: "FAILED",
+  CANCELED: "CANCELED",
+  TERMINATED: "TERMINATED",
+  CONTINUED_AS_NEW: "CONTINUED_AS_NEW",
+  TIMED_OUT: "TIMED_OUT",
+} as const;
+
+export type WorkflowStatus = (typeof WORKFLOW_STATUS)[keyof typeof WORKFLOW_STATUS];
 
 const workflowStatusAliasMap: Record<string, WorkflowStatus> = {
-  STATUS_UNSPECIFIED: WorkflowStatus.UNSPECIFIED,
-  STATUS_RUNNING: WorkflowStatus.RUNNING,
-  STATUS_COMPLETED: WorkflowStatus.COMPLETED,
-  STATUS_FAILED: WorkflowStatus.FAILED,
-  STATUS_CANCELED: WorkflowStatus.CANCELED,
-  STATUS_TERMINATED: WorkflowStatus.TERMINATED,
-  STATUS_CONTINUED_AS_NEW: WorkflowStatus.CONTINUED_AS_NEW,
-  STATUS_TIMED_OUT: WorkflowStatus.TIMED_OUT,
+  STATUS_UNSPECIFIED: WORKFLOW_STATUS.UNSPECIFIED,
+  STATUS_RUNNING: WORKFLOW_STATUS.RUNNING,
+  STATUS_COMPLETED: WORKFLOW_STATUS.COMPLETED,
+  STATUS_FAILED: WORKFLOW_STATUS.FAILED,
+  STATUS_CANCELED: WORKFLOW_STATUS.CANCELED,
+  STATUS_TERMINATED: WORKFLOW_STATUS.TERMINATED,
+  STATUS_CONTINUED_AS_NEW: WORKFLOW_STATUS.CONTINUED_AS_NEW,
+  STATUS_TIMED_OUT: WORKFLOW_STATUS.TIMED_OUT,
 };
 
 export function parseWorkflowStatus(rawStatus: string): WorkflowStatus {
-  if (rawStatus in WorkflowStatus) {
-    return WorkflowStatus[rawStatus as keyof typeof WorkflowStatus];
+  if (rawStatus in WORKFLOW_STATUS) {
+    return WORKFLOW_STATUS[rawStatus as keyof typeof WORKFLOW_STATUS];
   }
 
-  return workflowStatusAliasMap[rawStatus] ?? WorkflowStatus.UNSPECIFIED;
+  return workflowStatusAliasMap[rawStatus] ?? WORKFLOW_STATUS.UNSPECIFIED;
 }
 
 export interface AnalysisMetrics {
-  scriptAdherenceScore: number;
-  talkRatio: number;
-  objectionHandlingScore: number;
-  mistakesCount: number;
-  sentimentScore: number;
-  leadQualityScore: number;
+  scriptAdherenceScore: number | null;
+  talkRatio: number | null;
+  objectionHandlingScore: number | null;
+  mistakesCount: number | null;
+  sentimentScore: number | null;
+  leadQualityScore: number | null;
 }
 
 export interface AnalysisResult {
   transcript: string;
-  category: string;
+  category: string | null;
   metrics: AnalysisMetrics;
-  summary: string;
+  summary: string | null;
 }
 
 export interface WorkflowStatusResponse {
