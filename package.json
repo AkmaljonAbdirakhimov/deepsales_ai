@@ -1,0 +1,14 @@
+{
+  "name": "deepsales-mvp",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:api": "npm --workspace @deepsales/api run dev",
+    "dev:worker": "npm --workspace @deepsales/worker run dev",
+    "typecheck": "npm run -ws typecheck"
+  }
+}
