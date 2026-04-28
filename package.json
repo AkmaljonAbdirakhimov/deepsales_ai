@@ -7,8 +7,10 @@
     "packages/*"
   ],
   "scripts": {
-    "dev:api": "npm --workspace @deepsales/api run dev",
-    "dev:worker": "npm --workspace @deepsales/worker run dev",
+    "dev:backend": "npm --workspace @deepsales/backend run dev",
+    "dev:temporal": "npm --workspace @deepsales/temporal run dev",
+    "dev:api": "npm run dev:backend",
+    "dev:worker": "npm run dev:temporal",
     "typecheck": "npm run -ws typecheck"
   }
 }
