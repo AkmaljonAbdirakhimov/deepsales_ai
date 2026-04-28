@@ -7,14 +7,14 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@temporalio/activity": "^1.11.7",
-    "@temporalio/client": "^1.11.7",
-    "@temporalio/worker": "^1.11.7",
-    "@temporalio/workflow": "^1.11.7"
+    "@temporalio/activity": "^1.16.1",
+    "@temporalio/client": "^1.16.1",
+    "@temporalio/worker": "^1.16.1",
+    "@temporalio/workflow": "^1.16.1"
   },
   "devDependencies": {
-    "@types/node": "^22.15.3",
+    "@types/node": "^25.6.0",
     "tsx": "^4.19.3",
-    "typescript": "^5.8.3"
+    "typescript": "^6.0.3"
   }
 }

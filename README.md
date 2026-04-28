@@ -4,7 +4,7 @@ Minimal starter setup for upload-only audio analysis:
 
 - `apps/backend`: Upload endpoint and workflow status/result endpoints
 - `apps/temporal`: Temporal worker + workflow + mock analysis activities
-- `apps/frontend`: Reserved for the React frontend app
+- `apps/frontend`: React + Vite + shadcn-style UI for upload and result view
 
 ## 1) Start Temporal locally
 
@@ -34,7 +34,12 @@ npm run dev:temporal
 npm run dev:backend
 ```
 
+```bash
+npm run dev:frontend
+```
+
 API runs on `http://localhost:4000`.
+Frontend runs on `http://localhost:5173`.
 
 ## 4) Test upload
 

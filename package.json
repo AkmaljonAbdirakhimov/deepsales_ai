@@ -9,6 +9,7 @@
   "scripts": {
     "dev:backend": "npm --workspace @deepsales/backend run dev",
     "dev:temporal": "npm --workspace @deepsales/temporal run dev",
+    "dev:frontend": "npm --workspace @deepsales/frontend run dev",
     "dev:api": "npm run dev:backend",
     "dev:worker": "npm run dev:temporal",
     "typecheck": "npm run -ws typecheck"
