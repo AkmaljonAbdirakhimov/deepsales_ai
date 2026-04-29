@@ -1,4 +1,5 @@
 import { getDbPool } from "@/lib/db";
+import { ProvisionOrganizationForm } from "@/components/admin/ProvisionOrganizationForm";
 
 export const dynamic = "force-dynamic";
 
@@ -37,6 +38,8 @@ export default async function OrganizationsPage() {
           Tenants on the platform. {rows.length} shown.
         </p>
       </div>
+
+      <ProvisionOrganizationForm />
 
       <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
         <table className="w-full text-sm">
