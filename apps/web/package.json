@@ -1,0 +1,32 @@
+{
+  "name": "@deepsales/web",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "db:migrate": "dotenv -e ../../.env -- npx @better-auth/cli migrate"
+  },
+  "dependencies": {
+    "@deepsales/shared": "*",
+    "better-auth": "^1.6.9",
+    "next": "16.2.4",
+    "pg": "^8.20.0",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.2.4",
+    "@types/node": "^22",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "dotenv-cli": "^11.0.0",
+    "eslint": "^10.2.1",
+    "eslint-config-next": "16.2.4",
+    "tailwindcss": "^4.2.4",
+    "typescript": "^6.0.3"
+  }
+}

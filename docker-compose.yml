@@ -1,0 +1,73 @@
+services:
+  # ── PostgreSQL ─────────────────────────────────────────────────
+  postgres:
+    image: postgres:17-alpine
+    container_name: deepsales_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+      POSTGRES_DB: ${DB_NAME:-deepsales}
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres} -d ${DB_NAME:-deepsales}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # ── ClickHouse ─────────────────────────────────────────────────
+  clickhouse:
+    image: clickhouse/clickhouse-server:24.12-alpine
+    container_name: deepsales_clickhouse
+    restart: unless-stopped
+    environment:
+      CLICKHOUSE_USER: ${CH_USER:-default}
+      CLICKHOUSE_PASSWORD: ${CH_PASSWORD:-clickhouse}
+      CLICKHOUSE_DB: ${CH_DB:-deepsales_analytics}
+    ports:
+      - "${CH_HTTP_PORT:-8123}:8123"   # HTTP interface (queries, UI)
+      - "${CH_TCP_PORT:-9000}:9000"    # Native TCP interface
+    volumes:
+      - clickhouse_data:/var/lib/clickhouse
+    healthcheck:
+      test: ["CMD-SHELL", "clickhouse-client --query 'SELECT 1'"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  # ── Temporal (dev server — all-in-one) ─────────────────────────
+  temporal:
+    image: temporalio/auto-setup:1.29.6
+    container_name: deepsales_temporal
+    restart: unless-stopped
+    environment:
+      - DB=postgres12
+      - DB_PORT=5432
+      - POSTGRES_USER=${DB_USER:-postgres}
+      - POSTGRES_PWD=${DB_PASSWORD:-postgres}
+      - POSTGRES_SEEDS=postgres
+    ports:
+      - "7233:7233"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  # ── Temporal UI ────────────────────────────────────────────────
+  temporal-ui:
+    image: temporalio/ui:2.49.1
+    container_name: deepsales_temporal_ui
+    restart: unless-stopped
+    environment:
+      TEMPORAL_ADDRESS: temporal:7233
+      TEMPORAL_CORS_ORIGINS: http://localhost:3000
+    ports:
+      - "8080:8080"
+    depends_on:
+      - temporal
+
+volumes:
+  postgres_data:
+  clickhouse_data:
