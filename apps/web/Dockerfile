@@ -26,8 +26,8 @@ COPY . .
 # Dummy build-time vars so `next build` and Better Auth client init don't fail.
 # Real secrets are injected at container runtime, never baked into the image.
 ENV BETTER_AUTH_SECRET="build-time-placeholder-build-time-placeholder"
-ENV BETTER_AUTH_URL="http://localhost:3000"
-ENV NEXT_PUBLIC_APP_URL="http://localhost:3000"
+ENV BETTER_AUTH_URL="http://localhost:3100"
+ENV NEXT_PUBLIC_APP_URL="http://localhost:3100"
 ENV NEXT_PUBLIC_API_URL="http://localhost:4000/api/v1"
 
 RUN npm run build:packages

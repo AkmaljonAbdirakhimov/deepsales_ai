@@ -21,8 +21,18 @@ import {
  *   await authClient.admin.banUser({ userId, banReason: "spam" })
  *   await authClient.admin.impersonateUser({ userId })
  */
+// Inlined at build time by Next.js. If unset, fail loudly so we never silently
+// hit the wrong origin (which causes confusing CORS errors at sign-in).
+const baseURL = process.env.NEXT_PUBLIC_APP_URL;
+if (!baseURL) {
+  throw new Error(
+    "Missing required environment variable: NEXT_PUBLIC_APP_URL. " +
+      "Set it in .env (root) and restart `npm run dev:web`.",
+  );
+}
+
 export const authClient = createAuthClient({
-  baseURL: process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000",
+  baseURL,
   plugins: [organizationClient(), adminClient()],
 });
 

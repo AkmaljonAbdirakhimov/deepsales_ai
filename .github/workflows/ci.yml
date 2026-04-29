@@ -16,7 +16,10 @@ concurrency:
 env:
   # Required for Next.js / Better Auth during `next build` (no real DB connection at build time).
   BETTER_AUTH_SECRET: ci-ci-ci-ci-ci-ci-ci-ci-ci-ci-ci-ci-ci-ci
-  BETTER_AUTH_URL: http://localhost:3000
+  BETTER_AUTH_URL: http://localhost:3100
+  WEB_URL: http://localhost:3100
+  NEXT_PUBLIC_APP_URL: http://localhost:3100
+  NEXT_PUBLIC_API_URL: http://localhost:4000/api/v1
   GEMINI_API_KEY: ci-build-placeholder
 
 jobs:

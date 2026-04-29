@@ -2,6 +2,7 @@ import "reflect-metadata";
 import { NestFactory } from "@nestjs/core";
 import { ValidationPipe } from "@nestjs/common";
 import { AppModule } from "./app.module";
+import { requireEnv } from "./env";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -19,7 +20,7 @@ async function bootstrap() {
   );
 
   app.enableCors({
-    origin: process.env.WEB_URL ?? "http://localhost:3000",
+    origin: requireEnv("WEB_URL"),
     credentials: true,
   });
 

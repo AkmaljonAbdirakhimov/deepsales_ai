@@ -1,6 +1,7 @@
 import { betterAuth } from "better-auth";
 import { admin, organization } from "better-auth/plugins";
 import { Pool } from "pg";
+import { requireEnv } from "./env";
 
 /**
  * Better Auth instance for the NestJS API.
@@ -19,8 +20,8 @@ export const auth = betterAuth({
     database: process.env.DB_NAME ?? "deepsales",
   }),
 
-  secret: process.env.BETTER_AUTH_SECRET,
-  baseURL: process.env.BETTER_AUTH_URL ?? "http://localhost:3000",
+  secret: requireEnv("BETTER_AUTH_SECRET"),
+  baseURL: requireEnv("BETTER_AUTH_URL"),
 
   emailAndPassword: { enabled: true, disableSignUp: true },
 
