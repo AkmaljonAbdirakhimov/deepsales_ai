@@ -3,12 +3,13 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev --turbopack --port 3100",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "db:migrate": "dotenv -e ../../.env -- npx @better-auth/cli migrate"
+    "db:migrate": "dotenv -e ../../.env -- better-auth migrate",
+    "setup:super-admin": "dotenv -e ../../.env -- tsx scripts/setup-super-admin.ts"
   },
   "dependencies": {
     "@deepsales/shared": "*",
@@ -19,6 +20,7 @@
     "react-dom": "^19.2.5"
   },
   "devDependencies": {
+    "@better-auth/cli": "^1.4.21",
     "@tailwindcss/postcss": "^4.2.4",
     "@types/node": "^22",
     "@types/react": "^19.2.14",
@@ -27,6 +29,7 @@
     "eslint": "^10.2.1",
     "eslint-config-next": "16.2.4",
     "tailwindcss": "^4.2.4",
+    "tsx": "^4.20.0",
     "typescript": "^6.0.3"
   }
 }

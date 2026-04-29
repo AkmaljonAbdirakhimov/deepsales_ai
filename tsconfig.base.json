@@ -3,6 +3,7 @@
     "target": "ES2023",
     "module": "commonjs",
     "lib": ["ES2023"],
+    "ignoreDeprecations": "6.0",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,

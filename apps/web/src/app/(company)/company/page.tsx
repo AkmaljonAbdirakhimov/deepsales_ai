@@ -2,14 +2,14 @@ const stats = [
   { label: "Calls Analyzed", value: "1,284", change: "+12%" },
   { label: "Avg Script Score", value: "74%", change: "+3%" },
   { label: "Avg Talk Ratio", value: "58%", change: "-2%" },
-  { label: "Open Tasks", value: "37", change: "+5" },
+  { label: "Active Managers", value: "12", change: "+1" },
 ];
 
-export default function DashboardPage() {
+export default function CompanyOverviewPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-bold text-white">Overview</h1>
+        <h1 className="text-2xl font-bold text-white">Company overview</h1>
         <p className="text-slate-400 text-sm mt-1">Last 30 days</p>
       </div>
 
@@ -27,7 +27,7 @@ export default function DashboardPage() {
       </div>
 
       <div className="bg-slate-900 border border-slate-800 rounded-xl p-6">
-        <h2 className="text-white font-semibold mb-4">Recent Calls</h2>
+        <h2 className="text-white font-semibold mb-4">Recent calls</h2>
         <p className="text-slate-500 text-sm">
           Call list will appear here once integrated with the API.
         </p>

@@ -3,27 +3,37 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-const navItems = [
-  { label: "Overview", href: "/dashboard" },
-  { label: "Calls", href: "/dashboard/calls" },
-  { label: "Analytics", href: "/dashboard/analytics" },
-  { label: "Settings", href: "/dashboard/settings" },
-];
+export interface NavItem {
+  label: string;
+  href: string;
+}
 
-export function Sidebar() {
+interface SidebarProps {
+  brandHref: string;
+  brandSubtitle?: string;
+  items: NavItem[];
+}
+
+export function Sidebar({ brandHref, brandSubtitle, items }: SidebarProps) {
   const pathname = usePathname();
 
   return (
     <aside className="w-56 shrink-0 border-r border-slate-800 bg-slate-900 flex flex-col">
-      <div className="px-5 py-6 border-b border-slate-800">
+      <Link href={brandHref} className="px-5 py-6 border-b border-slate-800 block">
         <span className="text-xl font-bold text-white">
           Deep<span className="text-blue-400">Sales</span>
         </span>
-      </div>
+        {brandSubtitle && (
+          <span className="block text-xs text-slate-500 mt-0.5">
+            {brandSubtitle}
+          </span>
+        )}
+      </Link>
 
       <nav className="flex-1 px-3 py-4 space-y-1">
-        {navItems.map((item) => {
-          const active = pathname === item.href;
+        {items.map((item) => {
+          const active =
+            pathname === item.href || pathname.startsWith(`${item.href}/`);
           return (
             <Link
               key={item.href}

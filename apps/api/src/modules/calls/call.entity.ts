@@ -20,40 +20,40 @@ export type CrmSource = "amocrm" | "bitrix24" | "odoo";
 @Entity("calls")
 export class Call {
   @PrimaryGeneratedColumn("uuid")
-  id: string;
+  id!: string;
 
   @Column()
-  tenantId: string;
+  tenantId!: string;
 
   @ManyToOne(() => Tenant)
   @JoinColumn({ name: "tenantId" })
-  tenant: Tenant;
+  tenant!: Tenant;
 
   @Column({ type: "varchar" })
-  crmSource: CrmSource;
+  crmSource!: CrmSource;
 
   @Column({ nullable: true })
-  crmLeadId: string;
+  crmLeadId!: string;
 
   @Column({ nullable: true })
-  crmUserId: string;
+  crmUserId!: string;
 
   @Column({ nullable: true })
-  audioUrl: string;
+  audioUrl!: string;
 
   @Column({ type: "varchar", default: "pending" })
-  status: CallStatus;
+  status!: CallStatus;
 
   /** Populated after AI analysis */
   @Column({ type: "jsonb", nullable: true })
-  analysisResult: Record<string, unknown> | null;
+  analysisResult!: Record<string, unknown> | null;
 
   @Column({ nullable: true })
-  temporalWorkflowId: string;
+  temporalWorkflowId!: string;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt!: Date;
 }

@@ -5,6 +5,7 @@
     "moduleResolution": "node",
     "outDir": "./dist",
     "rootDir": "./src",
+    "baseUrl": ".",
     "paths": {
       "@deepsales/shared": ["../../packages/shared/src/index.ts"],
       "@deepsales/ai": ["../../packages/ai/src/index.ts"]

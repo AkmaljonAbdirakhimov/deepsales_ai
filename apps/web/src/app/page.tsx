@@ -13,18 +13,12 @@ export default function HomePage() {
           </p>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+        <div className="flex justify-center">
           <Link
             href="/login"
             className="px-6 py-3 bg-blue-600 hover:bg-blue-500 rounded-lg font-medium transition-colors"
           >
             Sign in
-          </Link>
-          <Link
-            href="/dashboard"
-            className="px-6 py-3 border border-slate-700 hover:border-slate-500 rounded-lg font-medium transition-colors"
-          >
-            Dashboard →
           </Link>
         </div>
 

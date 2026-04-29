@@ -1,0 +1,30 @@
+**/node_modules
+**/.next
+**/dist
+**/build
+**/.turbo
+
+# Logs
+*.log
+npm-debug.log*
+
+# Env (build-time uses dummy values; real secrets come from runtime env)
+.env
+.env.local
+.env.*.local
+
+# Git
+.git
+.gitignore
+
+# Editor / OS
+.vscode
+.idea
+.DS_Store
+
+# CI
+.github
+
+# Local docker compose
+docker-compose.yml
+docker-compose.override.yml

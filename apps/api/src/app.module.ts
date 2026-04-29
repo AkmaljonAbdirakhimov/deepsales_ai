@@ -42,4 +42,4 @@ import databaseConfig from "./config/database.config";
     WebhooksModule,
   ],
 })
-export class AppModule { }
+export class AppModule {}

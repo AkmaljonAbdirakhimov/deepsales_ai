@@ -50,7 +50,7 @@ services:
       - POSTGRES_PWD=${DB_PASSWORD:-postgres}
       - POSTGRES_SEEDS=postgres
     ports:
-      - "7233:7233"
+      - "${TEMPORAL_PORT:-7233}:7233"
     depends_on:
       postgres:
         condition: service_healthy
@@ -62,9 +62,9 @@ services:
     restart: unless-stopped
     environment:
       TEMPORAL_ADDRESS: temporal:7233
-      TEMPORAL_CORS_ORIGINS: http://localhost:3000
+      TEMPORAL_CORS_ORIGINS: ${WEB_URL:-http://localhost:3100}
     ports:
-      - "8080:8080"
+      - "${TEMPORAL_UI_PORT:-8080}:8080"
     depends_on:
       - temporal
 

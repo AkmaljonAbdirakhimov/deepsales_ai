@@ -1,0 +1,139 @@
+# Deploy to production.
+#
+# Triggers: manual button only (Actions → Deploy → Run workflow).
+# The "deploy" job runs in the GitHub Environment "production", so if you
+# configure required reviewers there, GitHub pauses until someone approves.
+#
+# Pipeline:
+#   1. Build all three Docker images in parallel (web, api, worker).
+#   2. Push them to GHCR with two tags: short SHA and "latest".
+#   3. Wait for production-environment approval.
+#   4. SSH to the VPS, write the IMAGE_TAG to .env, pull images, restart containers.
+#
+# Required GitHub repository secrets (Settings → Secrets and variables → Actions):
+#   VPS_HOST            — e.g. 1.2.3.4
+#   VPS_USER            — e.g. deploy
+#   VPS_SSH_KEY         — private SSH key contents (matches a key in ~/.ssh/authorized_keys on VPS)
+#   VPS_PROJECT_DIR     — e.g. /opt/deepsales
+#
+# Optional: VPS_SSH_PORT (defaults to 22)
+
+name: Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "Branch / tag / SHA to deploy"
+        required: false
+        default: ""
+      notes:
+        description: "Optional release notes"
+        required: false
+        default: ""
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_OWNER: ${{ github.repository }}
+
+jobs:
+  # ───────────────────────────────────────────────────────────────────────────
+  # 1. Build & push images to GitHub Container Registry
+  # ───────────────────────────────────────────────────────────────────────────
+  build:
+    name: Build & push ${{ matrix.app }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - app: web
+            dockerfile: apps/web/Dockerfile
+          - app: api
+            dockerfile: apps/api/Dockerfile
+          - app: worker
+            dockerfile: apps/worker/Dockerfile
+    outputs:
+      image_tag: ${{ steps.tag.outputs.image_tag }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.ref }}
+
+      - name: Compute image tag (short SHA)
+        id: tag
+        run: echo "image_tag=$(git rev-parse --short=7 HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build & push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ${{ matrix.dockerfile }}
+          push: true
+          cache-from: type=gha,scope=${{ matrix.app }}
+          cache-to: type=gha,scope=${{ matrix.app }},mode=max
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_OWNER }}/${{ matrix.app }}:${{ steps.tag.outputs.image_tag }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE_OWNER }}/${{ matrix.app }}:latest
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # 2. SSH deploy — paused by GitHub until "production" environment is approved
+  # ───────────────────────────────────────────────────────────────────────────
+  deploy:
+    name: Deploy to VPS
+    needs: build
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Show deploy summary
+        run: |
+          echo "Ref:    ${{ inputs.ref || github.ref_name }}"
+          echo "Tag:    ${{ needs.build.outputs.image_tag }}"
+          echo "Notes:  ${{ inputs.notes }}"
+
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_SSH_PORT || 22 }}
+          envs: IMAGE_TAG,GITHUB_REPOSITORY
+          script_stop: true
+          script: |
+            set -euo pipefail
+            cd "${{ secrets.VPS_PROJECT_DIR }}"
+
+            # Persist the image tag for this release so compose substitutes it.
+            grep -v '^IMAGE_TAG=' .env > .env.tmp || true
+            grep -v '^GITHUB_REPOSITORY=' .env.tmp > .env || true
+            rm -f .env.tmp
+            echo "IMAGE_TAG=${{ needs.build.outputs.image_tag }}" >> .env
+            echo "GITHUB_REPOSITORY=${{ env.IMAGE_OWNER }}" >> .env
+
+            # Authenticate to GHCR (first time will be skipped if already logged in).
+            echo "${{ secrets.GITHUB_TOKEN }}" \
+              | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+
+            docker compose -f docker-compose.yml -f docker-compose.prod.yml pull
+            docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --remove-orphans
+
+            docker image prune -f

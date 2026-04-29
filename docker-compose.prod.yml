@@ -1,0 +1,72 @@
+# Production compose file for the VPS.
+# Pulls pre-built images from GHCR and runs them alongside the infra services
+# defined in docker-compose.yml.
+#
+# Usage on the VPS:
+#   export IMAGE_TAG=<sha or version>
+#   docker compose -f docker-compose.yml -f docker-compose.prod.yml pull
+#   docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+
+services:
+  web:
+    image: ghcr.io/${GITHUB_REPOSITORY:-deepsales/deepsales}/web:${IMAGE_TAG:-latest}
+    container_name: deepsales_web
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
+      BETTER_AUTH_URL: ${BETTER_AUTH_URL}
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: ${DB_USER:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-postgres}
+      DB_NAME: ${DB_NAME:-deepsales}
+      NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL}
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  api:
+    image: ghcr.io/${GITHUB_REPOSITORY:-deepsales/deepsales}/api:${IMAGE_TAG:-latest}
+    container_name: deepsales_api
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 4000
+      WEB_URL: ${WEB_URL}
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
+      BETTER_AUTH_URL: ${BETTER_AUTH_URL}
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: ${DB_USER:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-postgres}
+      DB_NAME: ${DB_NAME:-deepsales}
+    ports:
+      - "4000:4000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  worker:
+    image: ghcr.io/${GITHUB_REPOSITORY:-deepsales/deepsales}/worker:${IMAGE_TAG:-latest}
+    container_name: deepsales_worker
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      TEMPORAL_ADDRESS: temporal:7233
+      TEMPORAL_NAMESPACE: ${TEMPORAL_NAMESPACE:-default}
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: ${DB_USER:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-postgres}
+      DB_NAME: ${DB_NAME:-deepsales}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      temporal:
+        condition: service_started
